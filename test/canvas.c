@@ -76,6 +76,45 @@ void print_status(void) {
 	}
 }
 
-void dialog(char message[]) {
+void dialog(char message[], int time) {
+	char buf_save[ROW_MAX][COL_MAX];
+	int sec = time;
+	for (int i = 0; i < ROW_MAX; i++) {
+		for (int j = 0; j < COL_MAX; j++) {
+			buf_save[i][j] = back_buf[i][j];
+		}
+	}
+	while (sec >= 0) {
+		for (int i = 0; i < 12; i++) {
+			back_buf[6][14 + i] = back_buf[8][14 + i] = '*';
+		}
+		back_buf[7][14] = back_buf[7][25] = '*';
+
+		for (int i = 0; i <= time; i++) {
+			back_buf[7][15] = '0' + sec;
+			draw();
+			sec--;
+			gotoxy(7, 17);
+			printf(message);
+			draw();
+			Sleep(1000);
+
+			back_buf[7][15] = ' ';
+
+			if (i == time) {
+				for (int i = 0; i < 12; i++) {
+					back_buf[6][14 + i] = back_buf[8][14 + i] = back_buf[7][14 + i] = ' ';
+					gotoxy(7, 17 + i);
+					printf(" ");
+				}
+			}
+			draw();
+		}
+		for (int i = 0; i < ROW_MAX; i++) {
+			for (int j = 0; j < COL_MAX; j++) {
+				back_buf[i][j] = buf_save[i][j];
+			}
+		}
+	}
 
 }
